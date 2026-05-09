@@ -7,10 +7,16 @@ const verification = {
   canonicalization: 'json.sorted_keys.v1'
 };
 
+const namespaceFor = (action) => {
+  if (action === 'sign') return 'signagent.eth';
+  if (action === 'endorse') return 'endorseagent.eth';
+  return `${action}agent.eth`;
+};
+
 const mkSchema = (action, status) => ({
   clas: `clas.${action}.v1`,
   action,
-  namespace: `${action}agent.eth`,
+  namespace: namespaceFor(action),
   version: 'v1',
   family: 'trust-verification',
   status,
@@ -22,12 +28,12 @@ const mkSchema = (action, status) => ({
 export const TRUST_SCHEMAS = {
   verify: mkSchema('verify', 'live'),
   authenticate: mkSchema('authenticate', 'planned'),
-  signing: mkSchema('signing', 'planned'),
   attest: mkSchema('attest', 'planned'),
-  validate: mkSchema('validate', 'planned'),
-  proof: mkSchema('proof', 'planned'),
-  witness: mkSchema('witness', 'planned'),
   certify: mkSchema('certify', 'planned'),
   notarize: mkSchema('notarize', 'planned'),
-  approve: mkSchema('approve', 'planned')
+  validate: mkSchema('validate', 'planned'),
+  witness: mkSchema('witness', 'planned'),
+  approve: mkSchema('approve', 'planned'),
+  sign: mkSchema('sign', 'planned'),
+  endorse: mkSchema('endorse', 'planned')
 };

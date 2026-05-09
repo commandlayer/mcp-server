@@ -1,0 +1,7 @@
+{
+  "action": "attest",
+  "status": "ok",
+  "output": {
+    "example": true
+  }
+}

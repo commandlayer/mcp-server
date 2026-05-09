@@ -1,0 +1,6 @@
+{
+  "action": "authenticate",
+  "input": {
+    "example": true
+  }
+}

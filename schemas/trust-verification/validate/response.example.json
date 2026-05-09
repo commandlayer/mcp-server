@@ -1,0 +1,7 @@
+{
+  "action": "validate",
+  "status": "ok",
+  "output": {
+    "example": true
+  }
+}

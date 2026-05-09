@@ -1,0 +1,6 @@
+{
+  "action": "verify",
+  "input": {
+    "example": true
+  }
+}

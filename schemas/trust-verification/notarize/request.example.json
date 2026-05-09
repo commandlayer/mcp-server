@@ -1,0 +1,6 @@
+{
+  "action": "notarize",
+  "input": {
+    "example": true
+  }
+}

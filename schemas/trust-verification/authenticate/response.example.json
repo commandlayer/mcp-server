@@ -1,0 +1,7 @@
+{
+  "action": "authenticate",
+  "status": "ok",
+  "output": {
+    "example": true
+  }
+}

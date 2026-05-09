@@ -1,0 +1,7 @@
+{
+  "action": "verify",
+  "status": "ok",
+  "output": {
+    "example": true
+  }
+}

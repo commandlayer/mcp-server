@@ -1,0 +1,9 @@
+{
+  "schema": "cl.receipt.v1",
+  "signer": "verifyagent.eth",
+  "kid": "v1",
+  "payload": {"action":"verify","subject":"did:example:123"},
+  "hash": "<sha256-hex-of-canonical-payload>",
+  "signature": "<base64-ed25519-signature>",
+  "metadata": {"proof": {"hash": "<sha256-hex-of-canonical-payload>"}}
+}

@@ -1,0 +1,7 @@
+{
+  "action": "notarize",
+  "status": "ok",
+  "output": {
+    "example": true
+  }
+}

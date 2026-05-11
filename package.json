@@ -1,5 +1,5 @@
 {
-  "name": "commandlayer-mcp-server",
+  "name": "@commandlayer/mcp-server",
   "version": "1.0.0",
   "description": "Trust & Verification v1 MCP server for CommandLayer",
   "type": "module",

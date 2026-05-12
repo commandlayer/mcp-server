@@ -43,5 +43,7 @@ export async function postToRuntime(path, payload) {
 }
 
 export async function verifyReceiptOnRuntime(receipt) {
-  return postToRuntime(process.env.COMMANDLAYER_VERIFY_PATH || '/api/verify', { receipt });
+  // Default path is /verify — matches the runtime server's POST /verify endpoint.
+  // Override with COMMANDLAYER_VERIFY_PATH if routing through a proxy.
+  return postToRuntime(process.env.COMMANDLAYER_VERIFY_PATH || '/verify', { receipt });
 }

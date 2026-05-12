@@ -3,26 +3,43 @@ import cors from 'cors';
 import { z } from 'zod';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
+import { receiptSchema } from './lib/receiptSchema.js';
 import { discoverAction } from './tools/discoverAction.js';
 import { getActionSchema } from './tools/getActionSchema.js';
 import { verifyReceipt } from './tools/verifyReceipt.js';
 import { resolveAgent } from './tools/resolveAgent.js';
+import { getProtocolVersion } from './tools/getProtocolVersion.js';
+import { validateReceiptSchema } from './tools/validateReceiptSchema.js';
+
+const PROTOCOL_VERSION = '1.1.0';
+
+// Tool definitions declared once at module level so schemas and handler
+// references are evaluated only on startup, not per request.
+const TOOL_DEFS = [
+  ['discover_action',        { capability: z.string().optional() }, discoverAction],
+  ['get_action_schema',      { action: z.string() },                getActionSchema],
+  ['verify_receipt',         { receipt: receiptSchema },            verifyReceipt],
+  ['resolve_agent',          { agent: z.string() },                 resolveAgent],
+  ['get_protocol_version',   {},                                    getProtocolVersion],
+  ['validate_receipt_schema',{ receipt: z.unknown() },              validateReceiptSchema],
+];
 
 const app = express();
 app.use(cors());
 app.use(express.json({ limit: '1mb' }));
 
 app.get('/health', (_req, res) => {
-  res.json({ ok: true, service: 'commandlayer-mcp-server' });
+  res.json({ ok: true, service: 'commandlayer-mcp-server', version: PROTOCOL_VERSION });
 });
 
 app.post('/mcp', async (req, res) => {
-  const server = new McpServer({ name: 'commandlayer-mcp-server', version: '1.0.0' });
-  server.tool('discover_action', { capability: z.string().optional() }, discoverAction);
-  server.tool('get_action_schema', { action: z.string() }, getActionSchema);
-  server.tool('verify_receipt', { receipt: z.any() }, verifyReceipt);
-  server.tool('resolve_agent', { agent: z.string() }, resolveAgent);
-
+  // A new McpServer is created per request to avoid transport collision under
+  // concurrent requests (server.connect() replaces the active transport).
+  // Tool defs are defined at module level so this is cheap — just reference binding.
+  const server = new McpServer({ name: 'commandlayer-mcp-server', version: PROTOCOL_VERSION });
+  for (const [name, schema, handler] of TOOL_DEFS) {
+    server.tool(name, schema, handler);
+  }
   const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined });
   await server.connect(transport);
   await transport.handleRequest(req, res, req.body);
@@ -30,5 +47,5 @@ app.post('/mcp', async (req, res) => {
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
-  console.log(`commandlayer-mcp-server listening on ${port}`);
+  console.log(`commandlayer-mcp-server v${PROTOCOL_VERSION} listening on ${port}`);
 });

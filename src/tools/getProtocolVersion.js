@@ -1,3 +1,5 @@
+const DEFAULT_RUNTIME_URL = 'https://runtime.commandlayer.org';
+
 export async function getProtocolVersion() {
   return {
     status: 'ok',
@@ -7,6 +9,6 @@ export async function getProtocolVersion() {
     receipt_format: 'commandlayer-receipt-v1.1',
     proof_fields: ['canonical', 'alg', 'signature', 'kid', 'signer_id'],
     schema_host: 'https://commandlayer.org/schemas',
-    runtime_url: 'https://runtime.commandlayer.org',
+    runtime_url: (process.env.COMMANDLAYER_RUNTIME_URL || DEFAULT_RUNTIME_URL).replace(/\/$/, ''),
   };
 }

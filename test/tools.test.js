@@ -6,9 +6,9 @@ import { getProtocolVersion } from '../src/tools/getProtocolVersion.js';
 import { validateReceiptSchema } from '../src/tools/validateReceiptSchema.js';
 
 function makeValidReceipt(overrides = {}) {
-  const now = new Date().toISOString();
+  const now = new Date().toISOString().replace(/\.\d+Z$/, '.000Z');
   return {
-    version: '1.0.0',
+    version: '1.1.0',
     family: 'trust-verification',
     signer: 'verifyagent.eth',
     verb: 'verify',
@@ -110,4 +110,18 @@ test('validateReceiptSchema rejects wrong canonicalization method', async () => 
   });
   assert.equal(result.valid, false);
   assert.ok(result.errors.some((e) => e.path === 'proof.canonical'));
+});
+
+test('validateReceiptSchema rejects receipt with old version 1.0.0', async () => {
+  const result = await validateReceiptSchema({ receipt: makeValidReceipt({ version: '1.0.0' }) });
+  assert.equal(result.valid, false);
+  assert.ok(result.errors.some((e) => e.path === 'version'));
+});
+
+test('validateReceiptSchema rejects receipt with non-UTC timestamp', async () => {
+  const result = await validateReceiptSchema({
+    receipt: makeValidReceipt({ ts: '2025-01-01T00:00:00+05:30' }),
+  });
+  assert.equal(result.valid, false);
+  assert.ok(result.errors.some((e) => e.path === 'ts'));
 });

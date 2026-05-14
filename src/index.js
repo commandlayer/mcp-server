@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import rateLimit from 'express-rate-limit';
 import { z } from 'zod';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
@@ -24,6 +25,14 @@ const TOOL_DEFS = [
   ['validate_receipt_schema',{ receipt: z.unknown() },              validateReceiptSchema],
 ];
 
+const mcpLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { status: 'RATE_LIMITED', error: 'Too many requests, please try again later.' },
+});
+
 const app = express();
 app.use(cors());
 app.use(express.json({ limit: '1mb' }));
@@ -32,7 +41,7 @@ app.get('/health', (_req, res) => {
   res.json({ ok: true, service: 'commandlayer-mcp-server', version: PROTOCOL_VERSION });
 });
 
-app.post('/mcp', async (req, res) => {
+app.post('/mcp', mcpLimiter, async (req, res) => {
   // A new McpServer is created per request to avoid transport collision under
   // concurrent requests (server.connect() replaces the active transport).
   // Tool defs are defined at module level so this is cheap — just reference binding.
@@ -47,5 +56,5 @@ app.post('/mcp', async (req, res) => {
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
-  console.log(`commandlayer-mcp-server v${PROTOCOL_VERSION} listening on ${port}`);
+  process.stderr.write(`commandlayer-mcp-server v${PROTOCOL_VERSION} listening on ${port}\n`);
 });

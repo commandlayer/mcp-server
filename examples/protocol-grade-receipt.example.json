@@ -1,9 +1,22 @@
 {
-  "schema": "cl.receipt.v1",
+  "version": "1.1.0",
+  "family": "trust-verification",
   "signer": "verifyagent.eth",
-  "kid": "v1",
-  "payload": {"action":"verify","subject":"did:example:123"},
-  "hash": "<sha256-hex-of-canonical-payload>",
-  "signature": "<base64-ed25519-signature>",
-  "metadata": {"proof": {"hash": "<sha256-hex-of-canonical-payload>"}}
+  "verb": "verify",
+  "ts": "2025-01-01T00:00:00.000Z",
+  "input": { "challenge": "abc123" },
+  "output": { "approved": true },
+  "execution": {
+    "status": "ok",
+    "duration_ms": 42,
+    "started_at": "2025-01-01T00:00:00.000Z",
+    "completed_at": "2025-01-01T00:00:00.042Z"
+  },
+  "proof": {
+    "canonical": "json.sorted_keys.v1",
+    "alg": "ed25519",
+    "signature": "<base64url-ed25519-signature-over-canonical-payload-excluding-proof-block>",
+    "kid": "verifyagent.eth#key-1",
+    "signer_id": "verifyagent.eth"
+  }
 }

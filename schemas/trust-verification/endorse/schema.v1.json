@@ -1,9 +1,7 @@
 {
-  "_deprecated": true,
-  "_note": "This file is superseded by schemas/trust-verification/sign/schema.v1.json. The action canonical name is 'sign', not 'signing'. Retained for backwards-compat discovery only.",
-  "clas": "clas.sign.v1",
-  "action": "sign",
-  "namespace": "signagent.eth",
+  "clas": "clas.endorse.v1",
+  "action": "endorse",
+  "namespace": "endorseagent.eth",
   "version": "v1",
   "family": "trust-verification",
   "status": "planned",

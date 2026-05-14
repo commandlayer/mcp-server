@@ -1,4 +1,5 @@
 const DEFAULT_RUNTIME_BASE_URL = 'https://runtime.commandlayer.org';
+const FETCH_TIMEOUT_MS = 10_000;
 
 function getRuntimeBaseUrl() {
   return (process.env.COMMANDLAYER_RUNTIME_URL || DEFAULT_RUNTIME_BASE_URL).replace(/\/$/, '');
@@ -8,20 +9,27 @@ export async function postToRuntime(path, payload) {
   const baseUrl = getRuntimeBaseUrl();
   const url = `${baseUrl}${path.startsWith('/') ? path : `/${path}`}`;
 
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+
   let response;
   try {
     response = await fetch(url, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
+      signal: controller.signal,
     });
   } catch (error) {
+    clearTimeout(timer);
+    const isTimeout = error instanceof Error && error.name === 'AbortError';
     return {
-      status: 'RUNTIME_UNAVAILABLE',
+      status: isTimeout ? 'RUNTIME_TIMEOUT' : 'RUNTIME_UNAVAILABLE',
       runtime_url: baseUrl,
-      error: error instanceof Error ? error.message : String(error)
+      error: error instanceof Error ? error.message : String(error),
     };
   }
+  clearTimeout(timer);
 
   let body;
   try {
@@ -35,7 +43,7 @@ export async function postToRuntime(path, payload) {
       status: 'RUNTIME_ERROR',
       runtime_url: baseUrl,
       http_status: response.status,
-      body
+      body,
     };
   }
 

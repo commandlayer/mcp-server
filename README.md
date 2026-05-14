@@ -10,14 +10,16 @@ This server exposes MCP tools and bridges runtime-backed operations to the Comma
 - `get_action_schema` — return CLAS request and receipt schema for a given verb
 - `verify_receipt` — forward receipt to the runtime verifier and return result
 - `resolve_agent` — resolve ENS agent name to metadata
+- `get_protocol_version` — return current protocol version and signing spec
+- `validate_receipt_schema` — validate a receipt object against the v1.1.0 schema locally
 
 ## Runtime bridge
 `verify_receipt` forwards `{ receipt }` to the runtime verify endpoint and returns the runtime response directly. Trust comes from verifiable CLAS receipts (canonical JSON → SHA-256 → Ed25519), not from the MCP server itself.
 
 ### Runtime environment variables
 - `COMMANDLAYER_RUNTIME_URL` (optional, default: `https://runtime.commandlayer.org`)
-- `COMMANDLAYER_VERIFY_PATH` (optional, default: `/api/verify`)
-- `ETHEREUM_RPC_URL` (optional, used for ENS text record lookups)
+- `COMMANDLAYER_VERIFY_PATH` (optional, default: `/verify`)
+- `ETHEREUM_RPC_URL` (optional, used for ENS text record lookups, default: `https://eth.llamarpc.com`)
 - `PORT` (optional, default: `3000`)
 
 ## Trust-verification verbs (CLAS canonical)

@@ -22,7 +22,10 @@ const TOOL_DEFS = [
   ['verify_receipt',         { receipt: receiptSchema },            verifyReceipt],
   ['resolve_agent',          { agent: z.string() },                 resolveAgent],
   ['get_protocol_version',   {},                                    getProtocolVersion],
-  ['validate_receipt_schema',{ receipt: z.unknown() },              validateReceiptSchema],
+  // z.record(z.string(), z.unknown()) is the correct MCP-compatible object
+  // schema for validate_receipt_schema: the handler re-parses with receiptSchema
+  // internally. z.unknown() is not permitted as an MCP inputSchema shape.
+  ['validate_receipt_schema',{ receipt: z.record(z.string(), z.unknown()) }, validateReceiptSchema],
 ];
 
 const mcpLimiter = rateLimit({

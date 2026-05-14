@@ -46,11 +46,11 @@ export const TRUST_ACTIONS = [
   },
   {
     agent: 'signagent.eth', action: 'sign', namespace: 'signagent.eth', status: 'planned', family: 'trust-verification', clas: 'clas.sign.v1', mcp_compatible: true, receipts: true,
-    description: TRUST_ACTION_DEFINITIONS.sign, schema_path: 'schemas/trust-verification/signing/schema.v1.json'
+    description: TRUST_ACTION_DEFINITIONS.sign, schema_path: 'schemas/trust-verification/sign/schema.v1.json'
   },
   {
     agent: 'endorseagent.eth', action: 'endorse', namespace: 'endorseagent.eth', status: 'planned', family: 'trust-verification', clas: 'clas.endorse.v1', mcp_compatible: true, receipts: true,
-    description: TRUST_ACTION_DEFINITIONS.endorse, schema_path: 'schemas/trust-verification/endorsing/schema.v1.json'
+    description: TRUST_ACTION_DEFINITIONS.endorse, schema_path: 'schemas/trust-verification/endorse/schema.v1.json'
   }
 ];
 
